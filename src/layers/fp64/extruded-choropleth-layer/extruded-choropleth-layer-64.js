@@ -27,7 +27,8 @@ import {vec3} from 'gl-matrix';
 import {readFileSync} from 'fs';
 import {join} from 'path';
 
-const DEFAULT_COLOR = [180, 180, 200];
+// const DEFAULT_COLOR = [180, 180, 200];
+const DEFAULT_COLOR = [0, 200, 0];
 const DEFAULT_AMBIENT_COLOR = [255, 255, 255];
 const DEFAULT_POINTLIGHT_AMBIENT_COEFFICIENT = 0.1;
 const DEFAULT_POINTLIGHT_LOCATION = [40.4406, -79.9959, 100];
@@ -72,7 +73,7 @@ export default class ExtrudedChoroplethLayer64 extends Layer {
       positions: {size: 4, update: this.calculatePositions},
       heights: {size: 2, update: this.calculateHeights},
       normals: {size: 3, update: this.calculateNormals},
-      colors: {size: 3, update: this.calculateColors}
+      colorsT: {size: 4, update: this.calculateColors}
     });
 
     const {gl} = this.context;
@@ -91,7 +92,8 @@ export default class ExtrudedChoroplethLayer64 extends Layer {
 
     const {
       elevation,
-      color, ambientColor, pointLightColor,
+      color,
+      ambientColor, pointLightColor,
       pointLightLocation, pointLightAmbientCoefficient,
       pointLightAttenuation, materialSpecularColor, materialShininess
     } = this.props;
@@ -264,16 +266,22 @@ export default class ExtrudedChoroplethLayer64 extends Layer {
   }
 
   calculateColors(attribute) {
+    const {getColor} = this.props;
+
     const colors = this.state.groupedVertices.map(
-      (vertices, buildingIndex) => {
-        const {color} = this.props;
-        const baseColor = Array.isArray(color) ? color[0] : color;
-        const topColor = Array.isArray(color) ?
-          color[color.length - 1] : color;
+      (vertices, buildingIndex, arr) => {
+
+        const feature = this.state.buildings[buildingIndex];
+        const color = getColor(feature).slice(0, 4) || DEFAULT_COLOR;
+
+        const baseColor = color;
+        const topColor = color;
+
         const numVertices = countVertices(vertices);
 
         const topColors = new Array(numVertices).fill(topColor);
         const baseColors = new Array(numVertices).fill(baseColor);
+
         return this.props.drawWireframe ? [topColors, baseColors] :
           [topColors, topColors, topColors, baseColors, baseColors];
       }
@@ -287,7 +295,8 @@ export default class ExtrudedChoroplethLayer64 extends Layer {
     this.state.buildings = [];
     for (const building of data.features) {
       const {properties, geometry: {coordinates, type}} = building;
-      if (!properties.height) {
+
+      if (!('height' in properties)) {
         properties.height = Math.random() * 1000;
       }
       switch (type) {
@@ -314,7 +323,7 @@ export default class ExtrudedChoroplethLayer64 extends Layer {
           coordinate => [
             coordinate[0],
             coordinate[1],
-            building.properties.height || 10
+            building.properties.height || 1
           ]
         )
       )

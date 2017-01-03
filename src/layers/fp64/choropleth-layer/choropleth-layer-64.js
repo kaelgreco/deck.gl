@@ -44,6 +44,7 @@ export default class ChoroplethLayer64 extends Layer {
       getColor: defaultGetColor,
       drawCountour: false,
       strokeWidth: 1,
+      elevation: 0,
       ...props
     });
   }
@@ -86,6 +87,10 @@ export default class ChoroplethLayer64 extends Layer {
 
     if (oldProps.opacity !== props.opacity) {
       this.setUniforms({opacity: props.opacity});
+    }
+
+    if (oldProps.elevation !== props.elevation) {
+      this.setUniforms({elevation: props.elevation});
     }
   }
 

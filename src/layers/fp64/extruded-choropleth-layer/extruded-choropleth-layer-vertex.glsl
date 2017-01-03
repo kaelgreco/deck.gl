@@ -40,6 +40,7 @@ uniform float uMaterialShininess;
 attribute vec4 positions;
 attribute vec2 heights;
 attribute vec3 normals;
+attribute vec4 colorsT;
 
 varying vec4 vColor;
 
@@ -69,14 +70,16 @@ void main(void) {
 
   gl_Position = project_to_clipspace_fp64(vertex_pos_modelspace);
 
-  vec3 color = applyLighting(
-  	vec3(
-  	  vertex_pos_modelspace[0].x,
-  	  vertex_pos_modelspace[1].x,
-  	  vertex_pos_modelspace[2].x),
-  	normals,
-  	colors
-  );
-  vColor = vec4(color, opacity);
+  // vec3 color = applyLighting(
+  //	vec3(
+  //	  vertex_pos_modelspace[0].x,
+  //	  vertex_pos_modelspace[1].x,
+  //	  vertex_pos_modelspace[2].x),
+  //	normals,
+  //	colors
+  //);
+  //vColor = vec4(color, opacity);
+
+  vColor = vec4(colorsT.rgb, colorsT.a * opacity) / 255.;
 }
 // `;

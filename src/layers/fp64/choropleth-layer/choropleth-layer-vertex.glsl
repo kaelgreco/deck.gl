@@ -30,6 +30,7 @@ attribute vec3 pickingColors;
 uniform float opacity;
 uniform float renderPickingBuffer;
 uniform vec3 selectedPickingColor;
+uniform float elevation;
 
 varying vec4 vColor;
 
@@ -48,7 +49,7 @@ void main(void) {
 
   vertex_pos_modelspace[0] = projectedCoord[0];
   vertex_pos_modelspace[1] = projectedCoord[1];
-  vertex_pos_modelspace[2] = heightsFP64;
+  vertex_pos_modelspace[2] = heightsFP64 + elevation;
   vertex_pos_modelspace[3] = vec2(1.0, 0.0);
 
   gl_Position = project_to_clipspace_fp64(vertex_pos_modelspace);

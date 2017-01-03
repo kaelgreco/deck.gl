@@ -28,6 +28,7 @@ const DEFAULT_COLOR = [0, 0, 255, 255];
 const defaultGetSourcePosition = x => x.sourcePosition;
 const defaultGetTargetPosition = x => x.targetPosition;
 const defaultGetColor = x => x.color;
+const defaultGetStrokeWidth = x => x.strokeWidth;
 
 export default class ArcLayer extends Layer {
 
@@ -46,6 +47,7 @@ export default class ArcLayer extends Layer {
     getTargetPosition = defaultGetTargetPosition,
     getSourceColor = defaultGetColor,
     getTargetColor = defaultGetColor,
+    getStrokeWidth = defaultGetStrokeWidth,
     ...props
   } = {}) {
     super({
@@ -54,6 +56,7 @@ export default class ArcLayer extends Layer {
       getTargetPosition,
       getSourceColor,
       getTargetColor,
+      getStrokeWidth,
       ...props
     });
   }
@@ -83,6 +86,7 @@ export default class ArcLayer extends Layer {
     const lineWidth = this.screenToDevicePixels(this.props.strokeWidth);
     gl.lineWidth(lineWidth);
     this.state.model.render(uniforms);
+
     // Setting line width back to 1 is here to workaround a Google Chrome bug
     // gl.clear() and gl.isEnabled() will return GL_INVALID_VALUE even with
     // correct parameter
